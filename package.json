@@ -1,0 +1,36 @@
+{
+  "name": "magic-cli",
+  "version": "1.0.0",
+  "description": "a client to generate project by template for React",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/magic-FE/magic-cli"
+  },
+  "keywords": [
+    "react-cli",
+    "redux-cli",
+    "cli",
+    "templete",
+    "generator"
+  ],
+  "author": "likun",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-core": "^6.21.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-stage-2": "^6.18.0",
+    "eslint": "^3.12.2",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^2.0.1"
+  },
+  "dependencies": {
+    "chalk": "^1.1.3",
+    "commander": "^2.9.0",
+    "inquirer": "^2.0.0"
+  }
+}
