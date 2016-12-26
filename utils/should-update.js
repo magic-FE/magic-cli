@@ -2,6 +2,9 @@ var https = require('https')
 var semver = require('semver')
 var chalk = require('chalk')
 var packageConfig = require('../package.json')
+var registryUrl = require('registry-url')()
+var url = require('url')
+var urlObject = url.parse(registryUrl)
 
 module.exports = function(done) {
   if (!semver.satisfies(process.version, packageConfig.engines.node)) {
@@ -10,7 +13,7 @@ module.exports = function(done) {
     ))
   }
   https.get({
-    host: 'registry.npmjs.org',
+    host: urlObject.host,
     path: '/magic-cli',
     timeout: 2000
   }, function(res) {
