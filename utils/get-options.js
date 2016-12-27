@@ -1,8 +1,7 @@
 var path = require('path')
-var metadata = require('read-metadata')
 var exists = require('fs').existsSync
-var getGitUser = require('./utils/get-user')
-var validateName = require('../utils/check-name')
+var getGitUser = require('./get-user')
+var validateName = require('./check-name').validateNameIsLegal
 
 /**
  * Read prompts metadata.
@@ -38,9 +37,9 @@ function getMetadata(dir) {
   var opts = {}
 
   if (exists(json)) {
-    opts = metadata.sync(json)
+    opts = require(json)
   } else if (exists(js)) {
-    var req = require(path.resolve(js))
+    var req = require(js)
     if (req !== Object(req)) {
       throw new Error('meta.js needs to expose an object')
     }

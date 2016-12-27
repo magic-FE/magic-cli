@@ -47,7 +47,7 @@ exports.askName = function(message, cb) {
   }]
   inquirer.prompt(prompts, function(props) {
     if (props.askAgain) {
-      return exports.askName(message)
+      return exports.askName(message, cb)
     }
     delete props.askAgain
     cb(props)
