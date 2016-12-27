@@ -1,10 +1,13 @@
 #!/usr/bin/env node
+
 var program = require('commander')
 var chalk = require('chalk')
 var jsonOperater = require('jsonfile')
 var path = require('path')
 var inquirer = require('inquirer')
-var sourcePath = path.join(__dirname, '../.magicrc')
+var exists = require('fs').existsSync
+var officialSourcePath = path.join(__dirname, '../.magicrc')
+var userSourcePath = path.join(require('os').homedir(), '.magicrc')
 var spinner = require('ora')('writing alias..')
 
 program
@@ -21,22 +24,30 @@ if (program.args.length !== 2) {
 /**
  * check alias
  */
-
-var alias = jsonOperater.readFileSync(sourcePath).alias
-var userAliases = alias.user
-var officialAliases = alias.official
+var officialAliases = jsonOperater.readFileSync(officialSourcePath).alias
+if (!exists(userSourcePath)) {
+  jsonOperater.writeFileSync(userSourcePath, { alias: {} })
+}
+var userAliases = jsonOperater.readFileSync(userSourcePath).alias
 
 var configName = program.args[0].replace(/\s/g, '')
 var projectName = program.args[1].replace(/\s/g, '')
 
 checkIsLegal(successCallback)
 
-function successCallback() {
-  alias.user[configName] = projectName
-  var configData = { alias: alias }
+function successCallback(isAready) {
+  if (isAready) {
+    spinner.text = `Already!!
+     alias ${chalk.green(configName)} for project ${chalk.green(projectName)} is Aready had
+     now! you can use ${chalk.green(`magic new ${configName}`)} to init the project ${chalk.green(projectName)} template
+    `
+    return spinner.succeed()
+  }
+  userAliases[configName] = projectName
+  var configData = { alias: userAliases }
   spinner.start()
   jsonOperater.writeFile(
-      sourcePath,
+      userSourcePath,
       configData,
       function(err) {
         if (err) {
@@ -70,9 +81,12 @@ function checkIsLegal(done) {
           return 'must enter a alias'
         }
         return true
+      },
+      filter: function(input) {
+        return input.replace(/\s/g, '')
       }
     }).then(function(answers) {
-      configName = answers.alias.replace(/\s/g, '')
+      configName = answers.alias
       checkIsLegal(done)
     })
   } else {
@@ -81,6 +95,7 @@ function checkIsLegal(done) {
 }
 
 function checkIsExists(done) {
+  if (userAliases[configName] === projectName) return done(true)
   if (userAliases[configName]) {
     inquirer.prompt([{
       name: 'enterAgain',
@@ -98,10 +113,13 @@ function checkIsExists(done) {
       },
       when: function(answers) {
         return answers.enterAgain
+      },
+      filter: function(input) {
+        return input.replace(/\s/g, '')
       }
     }]).then(function(answers) {
       if (answers.enterAgain) {
-        configName = answers.alias.replace(/\s/g, '')
+        configName = answers.alias
         checkIsLegal(done)
       } else {
         done()
