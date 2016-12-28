@@ -3,45 +3,50 @@
 var program = require('commander')
 var chalk = require('chalk')
 var jsonOperater = require('jsonfile')
-var path = require('path')
 var inquirer = require('inquirer')
-var exists = require('fs').existsSync
-var officialSourcePath = path.join(__dirname, '../.magicrc')
-var userSourcePath = path.join(require('os').homedir(), '.magicrc')
 var spinner = require('ora')('writing alias..')
+var textHelper = require('../utils/text-helper')
+
+var sourcePath = require('../utils/source-path')
+var officialSourcePath = sourcePath.officialSourcePath
+var userSourcePath = sourcePath.userSourcePath
 
 program
-  .usage('<alias-name> [project-name]')
-  .description(chalk.gray('### 😃  Config an alias of one project'))
+  .usage('<alias-name> <repo-name>/<template-dir>')
+  .description(chalk.gray('### 😃  Config an alias of one template'))
   .parse(process.argv)
+  .on('--help', function() {
+    console.log('  Examples:')
+    console.log()
+    console.log(chalk.gray('    # config an alias for a github template'))
+    console.log('    $ magic alias aliasName owner/repo')
+    console.log()
+    console.log(chalk.gray('    # after one setting, you can create a new project straight from the alias'))
+    console.log('    $ magic new aliasName dirname')
+    console.log()
+  })
 
 if (program.args.length < 1) program.help()
 
 if (program.args.length !== 2) {
-  console.log(chalk.red(' error use, please see --help'))
+  console.log(textHelper.error('Error args!! please see --help'))
   process.exit()
 }
+
+sourcePath.checkUserSourcePath() // checkUserPath isExist?
 /**
  * check alias
  */
 var officialAliases = jsonOperater.readFileSync(officialSourcePath).alias
-if (!exists(userSourcePath)) {
-  jsonOperater.writeFileSync(userSourcePath, { alias: {} })
-}
 var userAliases = jsonOperater.readFileSync(userSourcePath).alias
-
-var configName = program.args[0].replace(/\s/g, '')
-var projectName = program.args[1].replace(/\s/g, '')
+var configName = program.args[0]
+var projectName = program.args[1]
 
 checkIsLegal(successCallback)
 
 function successCallback(isAready) {
   if (isAready) {
-    spinner.text = `Already!!
-     alias ${chalk.green(configName)} for project ${chalk.green(projectName)} is Aready had
-     now! you can use ${chalk.green(`magic new ${configName}`)} to init the project ${chalk.green(projectName)} template
-    `
-    return spinner.succeed()
+    return console.log(textHelper.success(`Already!! now! you can use ${chalk.green(`magic new ${configName}`)} to init the template ${chalk.green(projectName)}`))
   }
   userAliases[configName] = projectName
   var configData = { alias: userAliases }
@@ -50,26 +55,26 @@ function successCallback(isAready) {
       userSourcePath,
       configData,
       function(err) {
+        spinner.stop()
         if (err) {
-          spinner.text = `write alias error ${err.message}`
-          spinner.fail()
+          console.log(textHelper.error(`Write alias error ${err.message}`))
         } else {
-          spinner.text = (`Success!!
-    set alias ${chalk.green(configName)} for project ${chalk.green(projectName)} success
-    now! you can use ${chalk.green(`magic new ${configName}`)} to init the project ${chalk.green(projectName)} template
-          `)
-          spinner.succeed()
+          console.log(textHelper.success(`Success!! now! you can use ${chalk.green(`magic new ${configName}`)} to init the template ${chalk.green(projectName)}`))
         }
       }
   )
 }
+/**
+ * [checkIsLegal]
+ * @param  {Function} done [callback]
+ */
 function checkIsLegal(done) {
   var matches = configName.match(/(\W)/g)
   var message = false
   if (matches && matches.length) {
-    message = `alias only contain word char${chalk.red('[A-Za-z0-9_]')}, please enter another!`
+    message = `Alias only contain word char${chalk.red('[A-Za-z0-9_]')}, please input another!`
   } else if (officialAliases[configName]) {
-    message = `"${chalk.red(configName)}" is a official alias. user alias must different from official alias,  please enter another!`
+    message = `The "${chalk.red(configName)}" is a official alias. please input another!`
   }
   if (message) {
     inquirer.prompt({
@@ -78,7 +83,7 @@ function checkIsLegal(done) {
       required: true,
       validate: function(input) {
         if (!input) {
-          return 'must enter a alias'
+          return 'Must input a alias'
         }
         return true
       },
@@ -93,21 +98,24 @@ function checkIsLegal(done) {
     checkIsExists(done)
   }
 }
-
+/**
+ * [checkIsExists]
+ * @param  {Function} done [callback]
+ */
 function checkIsExists(done) {
   if (userAliases[configName] === projectName) return done(true)
   if (userAliases[configName]) {
     inquirer.prompt([{
       name: 'enterAgain',
       type: 'confirm',
-      message: `alias "${chalk.yellow(configName)}" is already exist, please enter another! if not, the old will be overwriten by the new..chose another?`,
+      message: `Alias "${chalk.yellow(configName)}" is already exist, input another?`,
       default: true
     }, {
       name: 'alias',
-      message: `please enter another alias.`,
+      message: `Please input another alias.`,
       validate: function(input) {
         if (!input) {
-          return 'must enter a alias'
+          return 'Must input a alias'
         }
         return true
       },
