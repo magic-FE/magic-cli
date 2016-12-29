@@ -4,8 +4,7 @@
   "description": "a client to generate project by template for React",
   "main": "index.js",
   "bin": {
-    "magic": "bin/magic.js",
-    "magic-alias": "bin/magic-alias.js"
+    "magic": "bin/magic.js"
   },
   "scripts": {
     "magic-new":"DEBUG=magic:* node bin/magic-new  xfcf1/react-webpack-starter testss"
