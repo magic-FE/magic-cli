@@ -5,6 +5,7 @@ var packageConfig = require('../package.json')
 var registryUrl = require('registry-url')()
 var url = require('url')
 var urlObject = url.parse(registryUrl)
+var textHelper = require('./text-helper')
 
 module.exports = function(done) {
   if (!semver.satisfies(process.version, packageConfig.engines.node)) {
@@ -34,17 +35,17 @@ module.exports = function(done) {
       var latestVersion = parsedData['dist-tags'].latest
       var localVersion = packageConfig.version
       if (semver.lt(localVersion, latestVersion)) {
-        console.log(chalk.yellow('  A newer version of magic-cli is available.'))
-        console.log('============================================')
-        console.log(`     latest: ${chalk.green(latestVersion)}`)
-        console.log(`  installed: ${chalk.red(localVersion)}`)
-        console.log('============================================')
-        done(false)
+        console.log(textHelper.warning('  A newer version of magic-cli is available.'))
+        console.log(textHelper.warning('============================================'))
+        console.log(textHelper.warning(`     latest: ${chalk.green(latestVersion)}`))
+        console.log(textHelper.warning(`  installed: ${chalk.red(localVersion)}`))
+        console.log(textHelper.warning('============================================'))
+        done(latestVersion)
       }
-      done(true)
+      done()
     })
   }).on('error', (e) => {
-    console.log(chalk.red(`Got error: ${e.message}`))
-    done(true)
+    console.log(textHelper.error(`Check version error, you can ignore, get some error: ${e.message}`))
+    done()
   })
 }

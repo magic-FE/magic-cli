@@ -3,10 +3,21 @@
 var program = require('commander')
 var chalk = require('chalk')
 var jsonOperater = require('jsonfile')
+var inquirer = require('inquirer')
+var path = require('path')
+var os = require('os')
+var ora = require('ora')
+var download = require('download-git-repo')
+
 var sourcePath = require('../utils/source-path')
 var officialSourcePath = sourcePath.officialSourcePath
 var userSourcePath = sourcePath.userSourcePath
-var path = require('path')
+
+var shouldUpdate = require('../utils/should-update')
+var textHelper = require('../utils/text-helper')
+var execSync = require('child_process').execSync
+var checkYarn = require('../utils/check-yarn')
+var generate = require('../lib/generate')
 
 program
   .usage('<repo-name>/<alias-name> [<dianame>]')
@@ -29,33 +40,74 @@ program
 if (program.args.length < 1) program.help()
 
 sourcePath.checkUserSourcePath()
-  /**
-   * some config
-   */
-var name = program.args[0]
-var directory = program.args[1]
 
+/**
+ * some config
+ */
+var name = program.args[0]
+var directoryName = program.args[1]
+var inPlace = !directoryName || directoryName === '.' // place exec cli, is in dest directory?
+
+var targetName = inPlace ? path.relative('../', process.cwd()) : directoryName // the target directory
+var targetFullPath = path.resolve(directoryName || '.') // target absolute path
+
+var templateName = name
 if (/^\w+$/.test(name)) { // isAlias？
   var userAlias = jsonOperater.readFileSync(userSourcePath)
   var officialAlias = jsonOperater.readFileSync(officialSourcePath)
   if (officialAlias[name]) {
-    name = officialAlias[name]
+    templateName = officialAlias[name]
   } else if (userAlias[name]) {
-    name = userAlias[name]
+    templateName = userAlias[name]
   }
-} else if (/^[./]|(\w:)/.test(directory)) {
-  var templatePath = name.charAt(0) === '/' || /^\w:/.test(name) ? name : path.normalize(path.join(process.cwd(), name))
-  
 }
 
-
-
-
-
-
-
-
-
-
-
-
+if (/^[./]|(\w:)/.test(templateName)) { // isLocals?
+  var templatePath = templateName.charAt(0) === '/' || /^\w:/.test(templateName) ? templateName : path.normalize(path.join(process.cwd(), templateName))
+  var spinner = ora('local template generating..')
+  generate(targetName, templatePath, targetFullPath, function(err) {
+    spinner.stop()
+    if (err) return console.log(textHelper.error(`generate template error : ${err.message}, please re-run`))
+    console.log()
+    console.log(textHelper.success(`Generate success ${targetName}`))
+  })
+} else { // repo?
+  shouldUpdate(function(lastVersion) {
+    var isWindows = process.platform === 'win32'
+    if (lastVersion) {
+      inquirer([{
+        type: 'confirm',
+        name: 'isUpdate',
+        message: `do you want to update to the ${chalk.green(lastVersion)} verison?`
+      }]).then(function(answer) {
+        if (answer.isUpdate) {
+          var command = 'npm update -g magic-cli'
+          if (checkYarn()) {
+            command = 'yarn global add magic-cli'
+          }
+          command = isWindows ? command : `sudo ${command}`
+          execSync(command, { stdio: [0, 1, 2] })
+          console.log(textHelper(`success !! updated to ${chalk.green('magic-cli' + lastVersion)}  please re-run! `))
+        }
+      })
+    } else {
+      var templateCacheName = templateName.slice(templateName.lastIndexOf(':') + 1).replace(/[\:\/\#\.]/g, '_') // eslint-disable-line
+      var tmp = path.join(os.tmpdir(), templateCacheName)
+      var spinner = ora('template downloading...')
+      spinner.start()
+      download(templateName, tmp, { clone: !!program.clone }, function(err) {
+        spinner.stop()
+        if (err) return console.log(textHelper.error(`dowload template error :  ${err.message}, please re-run`))
+        console.log(textHelper.success('download template success!'))
+        // spinner.text = 'template generating...'
+        // spinner.start()
+        generate(targetName, tmp, targetFullPath, function(err) {
+          // spinner.stop()
+          if (err) return console.log(textHelper.error(`generate template error : ${err.message}, please re-run`))
+          console.log()
+          console.log(textHelper.success(`Generate success ${targetName}`))
+        })
+      })
+    }
+  })
+}

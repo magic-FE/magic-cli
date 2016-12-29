@@ -30,10 +30,15 @@ function checkNameIsExsits(name) {
   })
 }
 
-exports.askName = function(message, cb) {
+exports.askName = function(prompt, cb) {
+  var message = prompt.message || prompt.label || 'name?'
   var prompts = [{
     name: 'name',
-    message: message
+    message: prompt.message || prompt.label || 'name?',
+    default: prompt.default || '',
+    validate: prompt.validate || function() {
+      return true
+    }
   }, {
     type: 'confirm',
     name: 'askAgain',
@@ -45,9 +50,9 @@ exports.askName = function(message, cb) {
       })
     }
   }]
-  inquirer.prompt(prompts, function(props) {
+  inquirer.prompt(prompts).then(function(props) {
     if (props.askAgain) {
-      return exports.askName(message, cb)
+      return exports.askName(prompt, cb)
     }
     delete props.askAgain
     cb(props)

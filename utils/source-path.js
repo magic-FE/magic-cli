@@ -9,11 +9,11 @@ exports.userSourcePath = userSourcePath
 
 exports.checkUserSourcePath = function() {
   try {
-    if (!fs.existSync(userSourcePath)) {
+    if (!fs.existsSync(userSourcePath)) {
       fs.writeFileSync(userSourcePath, JSON.stringify({ alias: {} }))
     }
   } catch (err) {
-    console.log(textHelper.error(err.message))
+    console.log(textHelper.error(err))
     process.exit()
   }
 }
