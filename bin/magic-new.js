@@ -75,19 +75,20 @@ if (/^[./]|(\w:)/.test(templateName)) { // isLocals?
   shouldUpdate(function(lastVersion) {
     var isWindows = process.platform === 'win32'
     if (lastVersion) {
-      inquirer([{
+      inquirer.prompt([{
         type: 'confirm',
         name: 'isUpdate',
         message: `do you want to update to the ${chalk.green(lastVersion)} verison?`
       }]).then(function(answer) {
         if (answer.isUpdate) {
           var command = 'npm update -g magic-cli'
+          command = isWindows ? command : `sudo ${command}`
           if (checkYarn()) {
             command = 'yarn global add magic-cli'
           }
-          command = isWindows ? command : `sudo ${command}`
+          console.log(`$ ${command}`)
           execSync(command, { stdio: [0, 1, 2] })
-          console.log(textHelper(`success !! updated to ${chalk.green('magic-cli' + lastVersion)}  please re-run! `))
+          console.log(textHelper.success(`success !! updated to ${chalk.green('magic-cli' + lastVersion)}  please re-run! `))
         }
       })
     } else {

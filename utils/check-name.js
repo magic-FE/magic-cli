@@ -31,7 +31,6 @@ function checkNameIsExsits(name) {
 }
 
 exports.askName = function(prompt, cb) {
-  var message = prompt.message || prompt.label || 'name?'
   var prompts = [{
     name: 'name',
     message: prompt.message || prompt.label || 'name?',
@@ -46,7 +45,7 @@ exports.askName = function(prompt, cb) {
     default: true,
     when: function(answers) {
       return checkNameIsExsits(answers.name).then(function(available) {
-        return !available
+        return available
       })
     }
   }]

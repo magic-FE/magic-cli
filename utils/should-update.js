@@ -35,12 +35,12 @@ module.exports = function(done) {
       var latestVersion = parsedData['dist-tags'].latest
       var localVersion = packageConfig.version
       if (semver.lt(localVersion, latestVersion)) {
-        console.log(textHelper.warning('  A newer version of magic-cli is available.'))
-        console.log(textHelper.warning('============================================'))
-        console.log(textHelper.warning(`     latest: ${chalk.green(latestVersion)}`))
-        console.log(textHelper.warning(`  installed: ${chalk.red(localVersion)}`))
-        console.log(textHelper.warning('============================================'))
-        done(latestVersion)
+        console.log('  A newer version of magic-cli is available.')
+        console.log('============================================')
+        console.log(`     latest: ${chalk.green(latestVersion)}`)
+        console.log(`  installed: ${chalk.yellow(localVersion)}`)
+        console.log('============================================')
+        return done(latestVersion)
       }
       done()
     })

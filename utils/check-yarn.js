@@ -1,4 +1,4 @@
-exports.checkYarn = function() {
+module.exports = function() {
   try {
     require('child_process').execSync('yarn --version')
   } catch (e) {
