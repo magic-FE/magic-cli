@@ -104,18 +104,22 @@ function start() {
         if (err) {
           console.log(textHelper.error(`Download template ${chalk.green(templateName)} error :  ${err.message}`))
           if (err.statusCode === 404 && useAlias) {
-            inquirer.prompt([{
+            return inquirer.prompt([{
               type: 'confirm',
               name: 'delete',
               default: true,
               message: `alias ${chalk.red(name)} is not available, delete it?`
             }]).then(function(answer) {
               if (answer.delete) {
-                aliasTools.deleteUserAlias(name)
+                aliasTools.deleteUserAlias(name, function() {
+                  process.exit()
+                })
+              } else {
+                process.exit()
               }
             })
           }
-          return
+          process.exit()
         }
         console.log(textHelper.success(`Download template ${chalk.green(templateName)} success! start to generate..`))
         generate(targetName, tmp, targetFullPath, function(err) {

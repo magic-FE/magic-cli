@@ -6,6 +6,7 @@ var execSync = require('child_process').execSync
 var url = require('url')
 var urlObject = url.parse(registryUrl)
 var inquirer = require('inquirer')
+var ora = require('ora')
 
 var textHelper = require('./text-helper')
 var checkYarn = require('../utils/check-yarn')
@@ -14,6 +15,8 @@ module.exports = function(done) {
   if (!semver.satisfies(process.version, packageConfig.engines.node)) {
     console.log(textHelper.error(`You must upgrade node to >= ${packageConfig.engines.node}.x to use magic-cli`))
   }
+  var spinner = ora('check magic-cli version...')
+  spinner.start()
   https.get({
     host: urlObject.host,
     path: '/magic-cli',
@@ -35,31 +38,34 @@ module.exports = function(done) {
       var parsedData = JSON.parse(rawData)
       var latestVersion = parsedData['dist-tags'].latest
       var localVersion = packageConfig.version
+      spinner.stop()
       if (semver.lt(localVersion, latestVersion)) {
         console.log('  A newer version of magic-cli is available.')
         console.log('============================================')
         console.log(`     latest: ${chalk.green(latestVersion)}`)
         console.log(`  installed: ${chalk.yellow(localVersion)}`)
         console.log('============================================')
-        var isWindows = process.platform === 'win32'
-        return inquirer.prompt([{
-          type: 'confirm',
-          name: 'isUpdate',
-          message: `Do you want to update to the ${chalk.green(latestVersion)} verison?`
-        }]).then(function(answer) {
-          if (answer.isUpdate) {
-            var command = 'npm update -g magic-cli'
-            command = isWindows ? command : `sudo ${command}`
-            if (checkYarn()) {
-              command = 'yarn global add magic-cli'
-            }
-            console.log(`$ ${command}`)
-            execSync(command, { stdio: [0, 1, 2] })
-            console.log(textHelper.success(`Success !! updated to ${chalk.green('magic-cli@' + latestVersion)}  please re-run! `))
-          } else {
-            done()
-          }
-        })
+          // var isWindows = process.platform === 'win32'
+          // return inquirer.prompt([{
+          //   type: 'confirm',
+          //   name: 'isUpdate',
+          //   message: `Do you want to update to the ${chalk.green(latestVersion)} verison?`
+          // }]).then(function(answer) {
+          //   if (answer.isUpdate) {
+          //     var command = 'npm update -g magic-cli'
+          //     command = isWindows ? command : `sudo ${command}`
+          //     if (checkYarn()) {
+          //       command = 'yarn global add magic-cli'
+          //     }
+          //     console.log(`$ ${command}`)
+          //     execSync(command, { stdio: [0, 1, 2] })
+          //     console.log(textHelper.success(`Success !! updated to ${chalk.green('magic-cli@' + latestVersion)}  please re-run! `))
+          //   } else {
+          //     done()
+          //   }
+          // })
+      } else {
+        console.log(textHelper.success(` The currently installed magic is the ${chalk.green('latest')} version`))
       }
       done()
     })
