@@ -10,7 +10,7 @@
     "magic-new": "bin/magic-new.js"
   },
   "scripts": {
-    "magic-new":"DEBUG=magic:* node bin/magic-new xfcf1/react-webpack-starter testss"
+    "magic-new": "DEBUG=magic:* node bin/magic-new template testss"
   },
   "repository": {
     "type": "git",
@@ -45,7 +45,6 @@
     "jsonfile": "^2.4.0",
     "metalsmith": "^2.3.0",
     "minimatch": "^3.0.3",
-    "npm-name": "^3.0.0",
     "ora": "^0.4.0",
     "registry-url": "^3.1.0",
     "semver": "^5.3.0",

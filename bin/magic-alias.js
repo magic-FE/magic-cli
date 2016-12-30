@@ -4,8 +4,9 @@ var program = require('commander')
 var chalk = require('chalk')
 var jsonOperater = require('jsonfile')
 var inquirer = require('inquirer')
-var spinner = require('ora')('writing alias..')
 var textHelper = require('../utils/text-helper')
+
+var aliasTool = require('../lib/alias-tools')
 
 var sourcePath = require('../utils/source-path')
 var officialSourcePath = sourcePath.officialSourcePath
@@ -14,6 +15,7 @@ var userSourcePath = sourcePath.userSourcePath
 program
   .usage('<alias-name> <repo-name>/<template-dir>')
   .description(chalk.gray('### 😃  Config an alias of one template'))
+  .option('-l, --list', 'list all alias')
   .parse(process.argv)
   .on('--help', function() {
     console.log('  Examples:')
@@ -25,15 +27,31 @@ program
     console.log('    $ magic new aliasName dirname')
     console.log()
   })
+var args = program.args
 
-if (program.args.length < 1) program.help()
-
-if (program.args.length !== 2) {
-  console.log(textHelper.error('Error args!! please see --help'))
+if (program.list) {
+  var userAliases = aliasTool.getUserAlias()
+  var officialAlias = aliasTool.getOfficialAlias()
+  console.log('  AliasList:')
+  console.log(chalk.green('    # alias official set : '))
+  Object.keys(officialAlias).forEach(function(key) {
+    console.log(`     ${key} ==> ${officialAlias[key]}`)
+  })
+  console.log(chalk.green('    # alias you set : '))
+  Object.keys(userAliases).forEach(function(key) {
+    console.log(`     ${key} ==> ${userAliases[key]}`)
+  })
   process.exit()
 }
 
+if (args.length < 1) program.help()
+
+if (args.length !== 2) {
+  console.log(textHelper.error('Error args!! please see --help'))
+  process.exit()
+}
 sourcePath.checkUserSourcePath() // checkUserPath isExist?
+
 /**
  * check alias
  */
@@ -42,28 +60,13 @@ var userAliases = jsonOperater.readFileSync(userSourcePath).alias
 var configName = program.args[0]
 var projectName = program.args[1]
 
-checkIsLegal(successCallback)
-
-function successCallback(isAready) {
+checkIsLegal(function(isAready) {
   if (isAready) {
-    return console.log(textHelper.success(`Already!! now! you can use ${chalk.green(`magic new ${configName}`)} to init the template ${chalk.green(projectName)}`))
+    return console.log(textHelper.success(`Already!! now! you can use ${chalk.green('magic new ' + configName)} to init the template ${chalk.green(projectName)}`))
   }
-  userAliases[configName] = projectName
-  var configData = { alias: userAliases }
-  spinner.start()
-  jsonOperater.writeFile(
-      userSourcePath,
-      configData,
-      function(err) {
-        spinner.stop()
-        if (err) {
-          console.log(textHelper.error(`Write alias error ${err.message}`))
-        } else {
-          console.log(textHelper.success(`Success!! now! you can use ${chalk.green(`magic new ${configName}`)} to init the template ${chalk.green(projectName)}`))
-        }
-      }
-  )
-}
+  aliasTool.addUserAlias(configName, projectName)
+})
+
 /**
  * [checkIsLegal]
  * @param  {Function} done [callback]

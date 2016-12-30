@@ -8,15 +8,16 @@ var path = require('path')
 var os = require('os')
 var ora = require('ora')
 var download = require('download-git-repo')
+var exists = require('fs').existsSync
 
 var sourcePath = require('../utils/source-path')
 var officialSourcePath = sourcePath.officialSourcePath
 var userSourcePath = sourcePath.userSourcePath
+var aliasTools = require('../lib/alias-tools')
 
 var shouldUpdate = require('../utils/should-update')
 var textHelper = require('../utils/text-helper')
-var execSync = require('child_process').execSync
-var checkYarn = require('../utils/check-yarn')
+
 var generate = require('../lib/generate')
 
 program
@@ -51,64 +52,78 @@ var inPlace = !directoryName || directoryName === '.' // place exec cli, is in d
 var targetName = inPlace ? path.relative('../', process.cwd()) : directoryName // the target directory
 var targetFullPath = path.resolve(directoryName || '.') // target absolute path
 
-var templateName = name
-if (/^\w+$/.test(name)) { // isAlias？
-  var userAlias = jsonOperater.readFileSync(userSourcePath)
-  var officialAlias = jsonOperater.readFileSync(officialSourcePath)
-  if (officialAlias[name]) {
-    templateName = officialAlias[name]
-  } else if (userAlias[name]) {
-    templateName = userAlias[name]
-  }
+if (exists(targetFullPath)) {
+  inquirer.prompt([{
+    type: 'confirm',
+    message: inPlace ? 'Generate project in current directory?' : 'Target directory exists. Continue?',
+    name: 'ok'
+  }]).then(function(answers) {
+    if (answers.ok) {
+      start()
+    }
+  })
+} else {
+  start()
 }
 
-if (/^[./]|(\w:)/.test(templateName)) { // isLocals?
-  var templatePath = templateName.charAt(0) === '/' || /^\w:/.test(templateName) ? templateName : path.normalize(path.join(process.cwd(), templateName))
-  var spinner = ora('local template generating..')
-  generate(targetName, templatePath, targetFullPath, function(err) {
-    spinner.stop()
-    if (err) return console.log(textHelper.error(`generate template error : ${err.message}, please re-run`))
-    console.log()
-    console.log(textHelper.success(`Generate success ${targetName}`))
-  })
-} else { // repo?
-  shouldUpdate(function(lastVersion) {
-    var isWindows = process.platform === 'win32'
-    if (lastVersion) {
-      inquirer.prompt([{
-        type: 'confirm',
-        name: 'isUpdate',
-        message: `do you want to update to the ${chalk.green(lastVersion)} verison?`
-      }]).then(function(answer) {
-        if (answer.isUpdate) {
-          var command = 'npm update -g magic-cli'
-          command = isWindows ? command : `sudo ${command}`
-          if (checkYarn()) {
-            command = 'yarn global add magic-cli'
-          }
-          console.log(`$ ${command}`)
-          execSync(command, { stdio: [0, 1, 2] })
-          console.log(textHelper.success(`success !! updated to ${chalk.green('magic-cli' + lastVersion)}  please re-run! `))
-        }
-      })
+function start() {
+  var templateName = name
+  var useAlias = false
+  var userAlias = jsonOperater.readFileSync(userSourcePath).alias
+  var officialAlias = jsonOperater.readFileSync(officialSourcePath).alias
+  if (/^\w+$/.test(name)) { // isAlias？
+    if (officialAlias[name]) {
+      templateName = officialAlias[name]
+    } else if (userAlias[name]) {
+      useAlias = true
+      templateName = userAlias[name]
+    }
+    if (templateName !== name) {
+      console.log(textHelper.success(`Use alias ${chalk.green(name)} find template ${chalk.green(templateName)}`))
     } else {
+      templateName = `${name}/${name}`
+    }
+  }
+  if (/^[./]|(\w:)/.test(templateName)) { // isLocals?
+    var templatePath = templateName.charAt(0) === '/' || /^\w:/.test(templateName) ? templateName : path.normalize(path.join(process.cwd(), templateName))
+    generate(targetName, templatePath, targetFullPath, function(err) {
+      if (err) {
+        return console.log(textHelper.error(`Generate template error : ${err.message}, please re-run`))
+      }
+      console.log()
+      console.log(textHelper.success(`Generate success ${targetName}`))
+    })
+  } else if (templateName.indexOf('/') > -1) { // repo?
+    shouldUpdate(function() {
       var templateCacheName = templateName.slice(templateName.lastIndexOf(':') + 1).replace(/[\:\/\#\.]/g, '_') // eslint-disable-line
       var tmp = path.join(os.tmpdir(), templateCacheName)
-      var spinner = ora('template downloading...')
+      var spinner = ora(`Downloading template ${chalk.green(templateName)}...`)
       spinner.start()
       download(templateName, tmp, { clone: !!program.clone }, function(err) {
         spinner.stop()
-        if (err) return console.log(textHelper.error(`dowload template error :  ${err.message}, please re-run`))
-        console.log(textHelper.success('download template success!'))
-        // spinner.text = 'template generating...'
-        // spinner.start()
+        if (err) {
+          console.log(textHelper.error(`Download template ${chalk.green(templateName)} error :  ${err.message}`))
+          if (err.statusCode === 404 && useAlias) {
+            inquirer.prompt([{
+              type: 'confirm',
+              name: 'delete',
+              default: true,
+              message: `alias ${chalk.red(name)} is not available, delete it?`
+            }]).then(function(answer) {
+              if (answer.delete) {
+                aliasTools.deleteUserAlias(name)
+              }
+            })
+          }
+          return
+        }
+        console.log(textHelper.success(`Download template ${chalk.green(templateName)} success! start to generate..`))
         generate(targetName, tmp, targetFullPath, function(err) {
-          // spinner.stop()
-          if (err) return console.log(textHelper.error(`generate template error : ${err.message}, please re-run`))
+          if (err) return console.log(textHelper.error(`Generate template error : ${err.message}, please re-run`))
           console.log()
           console.log(textHelper.success(`Generate success ${targetName}`))
         })
       })
-    }
-  })
+    })
+  }
 }

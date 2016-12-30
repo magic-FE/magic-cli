@@ -1,17 +1,18 @@
 var https = require('https')
 var semver = require('semver')
 var chalk = require('chalk')
-var packageConfig = require('../package.json')
 var registryUrl = require('registry-url')()
+var execSync = require('child_process').execSync
 var url = require('url')
 var urlObject = url.parse(registryUrl)
-var textHelper = require('./text-helper')
+var inquirer = require('inquirer')
 
+var textHelper = require('./text-helper')
+var checkYarn = require('../utils/check-yarn')
+var packageConfig = require('../package.json')
 module.exports = function(done) {
   if (!semver.satisfies(process.version, packageConfig.engines.node)) {
-    console.log(chalk.red(
-      `  You must upgrade node to >= ${packageConfig.engines.node}.x to use magic-cli`
-    ))
+    console.log(textHelper.error(`You must upgrade node to >= ${packageConfig.engines.node}.x to use magic-cli`))
   }
   https.get({
     host: urlObject.host,
@@ -40,7 +41,25 @@ module.exports = function(done) {
         console.log(`     latest: ${chalk.green(latestVersion)}`)
         console.log(`  installed: ${chalk.yellow(localVersion)}`)
         console.log('============================================')
-        return done(latestVersion)
+        var isWindows = process.platform === 'win32'
+        return inquirer.prompt([{
+          type: 'confirm',
+          name: 'isUpdate',
+          message: `Do you want to update to the ${chalk.green(latestVersion)} verison?`
+        }]).then(function(answer) {
+          if (answer.isUpdate) {
+            var command = 'npm update -g magic-cli'
+            command = isWindows ? command : `sudo ${command}`
+            if (checkYarn()) {
+              command = 'yarn global add magic-cli'
+            }
+            console.log(`$ ${command}`)
+            execSync(command, { stdio: [0, 1, 2] })
+            console.log(textHelper.success(`Success !! updated to ${chalk.green('magic-cli@' + latestVersion)}  please re-run! `))
+          } else {
+            done()
+          }
+        })
       }
       done()
     })
