@@ -7,6 +7,7 @@
 [![deps package][deps]][deps-url]
 [![npm download][npm-download]][npm-download-url]
 [![npm package][license]][license-url]
+# usages
 
 
 [npm]: https://img.shields.io/npm/v/magic-cli.svg

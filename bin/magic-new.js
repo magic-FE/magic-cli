@@ -86,13 +86,7 @@ function start() {
   }
   if (/^[./]|(\w:)/.test(templateName)) { // isLocals?
     var templatePath = templateName.charAt(0) === '/' || /^\w:/.test(templateName) ? templateName : path.normalize(path.join(process.cwd(), templateName))
-    generate(targetName, templatePath, targetFullPath, function(err) {
-      if (err) {
-        return console.log(textHelper.error(`Generate template error : ${err.message}, please re-run`))
-      }
-      console.log()
-      console.log(textHelper.success(`Generate success ${targetName}`))
-    })
+    generate(targetName, templatePath, targetFullPath)
   } else if (templateName.indexOf('/') > -1) { // repo?
     shouldUpdate(function() {
       var templateCacheName = templateName.slice(templateName.lastIndexOf(':') + 1).replace(/[\:\/\#\.]/g, '_') // eslint-disable-line
@@ -110,23 +104,14 @@ function start() {
               default: true,
               message: `alias ${chalk.red(name)} is not available, delete it?`
             }]).then(function(answer) {
-              if (answer.delete) {
-                aliasTools.deleteUserAlias(name, function() {
-                  process.exit()
-                })
-              } else {
-                process.exit()
-              }
+              if (answer.delete) aliasTools.deleteUserAlias(name)
+              process.exit()
             })
           }
           process.exit()
         }
         console.log(textHelper.success(`Download template ${chalk.green(templateName)} success! start to generate..`))
-        generate(targetName, tmp, targetFullPath, function(err) {
-          if (err) return console.log(textHelper.error(`Generate template error : ${err.message}, please re-run`))
-          console.log()
-          console.log(textHelper.success(`Generate success ${targetName}`))
-        })
+        generate(targetName, tmp, targetFullPath)
       })
     })
   }

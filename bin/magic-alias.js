@@ -2,20 +2,19 @@
 
 var program = require('commander')
 var chalk = require('chalk')
-var jsonOperater = require('jsonfile')
 var inquirer = require('inquirer')
 var textHelper = require('../utils/text-helper')
 
 var aliasTool = require('../lib/alias-tools')
 
 var sourcePath = require('../utils/source-path')
-var officialSourcePath = sourcePath.officialSourcePath
-var userSourcePath = sourcePath.userSourcePath
+var path = require('path')
 
 program
   .usage('<alias-name> <repo-name>/<template-dir>')
   .description(chalk.gray('### 😃  Config an alias of one template'))
   .option('-l, --list', 'list all alias')
+  .option('-a, --absolute', 'if local add absolute path')
   .parse(process.argv)
   .on('--help', function() {
     console.log('  Examples:')
@@ -28,10 +27,9 @@ program
     console.log()
   })
 var args = program.args
-
+var userAliases = aliasTool.getUserAlias()
+var officialAlias = aliasTool.getOfficialAlias()
 if (program.list) {
-  var userAliases = aliasTool.getUserAlias()
-  var officialAlias = aliasTool.getOfficialAlias()
   console.log('  AliasList:')
   console.log(chalk.green('    # alias official set : '))
   Object.keys(officialAlias).forEach(function(key) {
@@ -55,14 +53,18 @@ sourcePath.checkUserSourcePath() // checkUserPath isExist?
 /**
  * check alias
  */
-var officialAliases = jsonOperater.readFileSync(officialSourcePath).alias
-var userAliases = jsonOperater.readFileSync(userSourcePath).alias
 var configName = program.args[0]
 var projectName = program.args[1]
 
 checkIsLegal(function(isAready) {
   if (isAready) {
     return console.log(textHelper.success(`Already!! now! you can use ${chalk.green('magic new ' + configName)} to init the template ${chalk.green(projectName)}`))
+  }
+  if (/^\w+$/.test(projectName)) {
+    projectName = './' + projectName
+  }
+  if (/^[\.]{1,2}\//.test(projectName) && program.absolute) { // eslint-disable-line
+    projectName = path.resolve(projectName)
   }
   aliasTool.addUserAlias(configName, projectName)
 })
@@ -76,7 +78,7 @@ function checkIsLegal(done) {
   var message = false
   if (matches && matches.length) {
     message = `Alias only contain word char${chalk.red('[A-Za-z0-9_]')}, please input another!`
-  } else if (officialAliases[configName]) {
+  } else if (officialAlias[configName]) {
     message = `The "${chalk.red(configName)}" is a official alias. please input another!`
   }
   if (message) {

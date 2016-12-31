@@ -4,6 +4,8 @@ var chalk = require('chalk')
 var https = require('https')
 var validateName = require('validate-npm-package-name')
 var inquirer = require('inquirer')
+var ora = require('ora')
+var textHelper = require('./text-helper')
 
 exports.checkNameIsExsits = checkNameIsExsits
 
@@ -29,28 +31,25 @@ function checkNameIsExsits(name) {
     })
   })
 }
-
 exports.askName = function(prompt, cb) {
-  var prompts = [{
-    name: 'name',
-    message: prompt.message || prompt.label || 'name?',
-    default: prompt.default || '',
-    validate: prompt.validate || function() {
-      return true
-    }
-  }, {
+  prompt.required = true
+  var prompts = [prompt, {
     type: 'confirm',
     name: 'askAgain',
-    message: 'The name above already exists on npm, choose another?',
+    message: 'choose another name?',
     default: true,
     when: function(answers) {
+      var spinner = ora(`checking package name ${chalk.yellow(answers.name)}...`).start()
       return checkNameIsExsits(answers.name).then(function(available) {
+        spinner.stop()
+        if (available) console.log(textHelper.warning(`The name ${chalk.yellow(answers.name)} above already exists on npm!`))
         return available
       })
     }
   }]
   inquirer.prompt(prompts).then(function(props) {
     if (props.askAgain) {
+      delete prompt.default
       return exports.askName(prompt, cb)
     }
     delete props.askAgain
