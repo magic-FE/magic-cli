@@ -22,28 +22,29 @@ With [yarn](https://yarnpkg.com/) do:
 
 # commands 
 
-* ### alias   
+* **alias**   
 
-    **description**
+    _description_
     > Add a mapping to the template 
 
-    **options**
+    _options_
     > `-l,--list`  Show all alias
+    
     > `-a,--absolute`  Add local template for absolute path
   
 
-* ### unalias
+* **unalias**
 
-    **description**
+    _description_
     > Remove a mapping to the template library
   
 
-* ### new  
+* **new**
 
-    **description**
+    _description_
     > Init a project from template
 
-    **options**
+    _options_
     > `-c,--clone`  Use `git clone` to download repo template
 
 # License
