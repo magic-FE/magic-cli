@@ -1,7 +1,8 @@
 
 # magic-cli  
 > A tools to help you easily develop react(vue) project
-  
+
+[![Build Status](https://travis-ci.org/magic-FE/magic-cli.svg?branch=master)](https://travis-ci.org/magic-FE/magic-cli)
 [![npm package][npm]][npm-url]
 [![node version][node]][node-url]
 [![deps package][deps]][deps-url]
