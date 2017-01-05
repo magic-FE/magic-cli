@@ -7,7 +7,9 @@
     "magic": "bin/magic.js",
     "magic-alias": "bin/magic-alias.js",
     "magic-unalias": "bin/magic-unalias.js",
-    "magic-new": "bin/magic-new.js"
+    "magic-new": "bin/magic-new.js",
+    "magic-generate": "bin/magic-generate.js",
+    "magic-g": "bin/magic-g.js"
   },
   "scripts": {
     "magic-new": "DEBUG=magic:* node bin/magic-new template testss"
