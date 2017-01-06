@@ -7,7 +7,7 @@
 [![node version][node]][node-url]
 [![deps package][deps]][deps-url]
 [![npm download][npm-download]][npm-download-url]
-[![npm package][license]][license-url]  
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 # install  
 With [npm](https://npmjs.org) do:  
@@ -50,7 +50,7 @@ With [yarn](https://yarnpkg.com/) do:
 
 # License
 
-MIT 
+MIT [![npm package][license]][license-url]
 
 [npm]: https://img.shields.io/npm/v/magic-cli.svg
 [npm-url]: https://www.npmjs.com/package/magic-cli
@@ -64,5 +64,5 @@ MIT
 [npm-download-url]: https://npmjs.com/package/magic-cli
 [npm-download]: https://img.shields.io/npm/dm/magic-cli.svg
 
-[license-url]: LICENSE.md
+[license-url]: https://github.com/magic-FE/magic-cli/blob/master/LICENSE
 [license]: http://img.shields.io/npm/l/magic-cli.svg?style=flat
