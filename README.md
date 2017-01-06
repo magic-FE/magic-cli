@@ -22,6 +22,9 @@ With [yarn](https://yarnpkg.com/) do:
 
 
 # commands 
+|  command  | options | description| Alias|
+|---|---|---|
+|magic new <alias>/<project>
 
 * **alias**   
 
@@ -48,9 +51,9 @@ With [yarn](https://yarnpkg.com/) do:
     _options_
     > `-c,--clone`  Use `git clone` to download repo template
 
-# License
+# License [![npm package][license]][license-url]
 
-MIT [![npm package][license]][license-url]
+[MIT][license-url]
 
 [npm]: https://img.shields.io/npm/v/magic-cli.svg
 [npm-url]: https://www.npmjs.com/package/magic-cli
