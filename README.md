@@ -53,7 +53,8 @@ _options_:
 ```
 
 _example_: 
-> if you set a blueprint like this
+> if you set a blueprint like this  
+
 ```
     └── route            
       ├── index.js
@@ -63,21 +64,26 @@ _example_:
           ├── __name__Components.js
           └── __name__Reducers.js
 ```
-> then use `magic g`
+
+> then use `magic g`  
+
 ```
 $ magic g route home
 ```
-> you will get result like this:
+
+> you will get result like this:  
+
 ```
     └── home
       ├── homeContainers.js
       ├── homeComponents.js
       └── homeReducers.js
 ```
+
 # Contents of Official  
 ### Templates :
 
-_Not finish, wait a moment_, you can use [vue-cli template](https://github.com/vuejs/vue-cli#official-templates) first, we has the same api like it
+_Not finish, wait a moment_, you can use [vue-cli template](https://github.com/vuejs/vue-cli#official-templates) first, we has the same api like it.
 
 ### Blueprints :
 |Name|Description|
