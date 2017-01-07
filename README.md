@@ -7,7 +7,7 @@
 [![node version][node]][node-url]
 [![deps package][deps]][deps-url]
 [![npm download][npm-download]][npm-download-url]
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+[![npm package][license]][license-url]
 
 # install  
 With [npm](https://npmjs.org) do:  
@@ -19,39 +19,74 @@ With [yarn](https://yarnpkg.com/) do:
 ```
  $ yarn global add magic-cli
 ```
+# commands  
+###  new
+> Init a project base on templates
+
+_options_:
+```
+    > -c, --clone   # Use git clone to download template
+    > -r, --remote  # Download remote template even if the local has a cache  
+```
+
+###  alias  
+> Add an alias to the template
+
+_options_:
+```
+    > -l, --list        # List all alias 
+    > -a, --absolute    # If local add absolute path  
+    > -d, --desc [desc] # Add some description for alias  
+```
+
+###  unalias:
+> Delete an alias to the template
+
+###  g/generate:
+> Generate files base on blueprint  
+
+_options_:
+```
+    > -l, --list        # list all blueprints
+    > -c, --cwd [path]  # Assign  generate start path(work dir)
+    > -f, --force       # overwrite the exsits file instead of ask  
+```
+
+_example_: 
+> if you set a blueprint like this
+```
+    └── route            
+      ├── index.js
+      └── files
+        └── __name__  
+          ├── __name__Containers.js
+          ├── __name__Components.js
+          └── __name__Reducers.js
+```
+> then use `magic g`
+```
+$ magic g route home
+```
+> you will get result like this:
+```
+    └── home
+      ├── homeContainers.js
+      ├── homeComponents.js
+      └── homeReducers.js
+```
+# Contents of Official  
+### Templates :
+
+_Not finish, wait a moment_, you can use [vue-cli template](https://github.com/vuejs/vue-cli#official-templates) first, we has the same api like it
+
+### Blueprints :
+|Name|Description|
+|---|---|
+|`magic g blueprint <name>`|generates a blueprint template file|
 
 
-# commands 
-|  command  | options | description| Alias|
-|---|---|---|
-|magic new <alias>/<project>
 
-* **alias**   
-
-    _description_
-    > Add a mapping to the template 
-
-    _options_
-    > `-l,--list`  Show all alias
-    
-    > `-a,--absolute`  Add local template for absolute path
-  
-
-* **unalias**
-
-    _description_
-    > Remove a mapping to the template library
-  
-
-* **new**
-
-    _description_
-    > Init a project from template
-
-    _options_
-    > `-c,--clone`  Use `git clone` to download repo template
-
-# License [![npm package][license]][license-url]
+# License 
 
 [MIT][license-url]
 
