@@ -90,9 +90,9 @@ Formats:
 - `__name.cap__`  or `__name.capitalize__`   => home to Home
 - `__name.low__`  or `__name.lowercase__`   => Home to home
 - `__name.up__`   or `__name.uppercase__`    => home to HOME
-- `__name.dash__` or `__name.dashcase__`  => HomeName to home-name
+- `__name.dash__` or `__name.dashcase__`  => homeName to home-name
 
-The files content also render by this rule , so you can write `__name__` will replace by `magic g` replace blueprint name
+The files content also render by this rule , so you can write `__name__` will be replaced
 # Contents 
 ### Templates :
 
