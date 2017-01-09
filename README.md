@@ -29,6 +29,10 @@ _options_:
     > -r, --remote  # Download remote template even if the local has a cache  
 ```
 
+_note_: 
+We render file use [Handlebars.js](https://github.com/wycats/handlebars.js). You can see it to write template
+
+
 ###  alias  
 > Add an alias to the template
 
@@ -80,7 +84,16 @@ $ magic g route home
       └── homeReducers.js
 ```
 
-# Contents of Official  
+_note_
+Formats:
+
+- `__name.cap__`  or `__name.capitalize__`   => home to Home
+- `__name.low__`  or `__name.lowercase__`   => Home to home
+- `__name.up__`   or `__name.uppercase__`    => home to HOME
+- `__name.dash__` or `__name.dashcase__`  => HomeName to home-name
+
+The files content also render by this rule , so you can write `__name__` will replace by `magic g` replace blueprint name
+# Contents 
 ### Templates :
 
 _Not finish, wait a moment_, you can use [vue-cli template](https://github.com/vuejs/vue-cli#official-templates) first, we has the same api like it.
