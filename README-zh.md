@@ -67,6 +67,8 @@ _说明_:
 - `__name.low__`  或者 `__name.lowercase__`   => Home to home
 - `__name.up__`   或者 `__name.uppercase__`    => home to HOME
 - `__name.dash__` 或者 `__name.dashcase__`  => homeName to home-name  
+4. 如果生成的文件已经存在则询问用户是否覆盖,而不是直接抛出错误
+
 
 _例子_: 
 > 如果你的blueprint文件是这样的  
