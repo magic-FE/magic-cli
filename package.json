@@ -1,7 +1,7 @@
 {
   "name": "magic-cli",
-  "version": "1.2.0",
-  "description": "a client to generate project by template for React",
+  "version": "1.2.1",
+  "description": "A tools to help you easily develop react(vue) project",
   "main": "index.js",
   "bin": {
     "magic": "bin/magic.js",
