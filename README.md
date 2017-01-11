@@ -8,6 +8,9 @@
 [![deps package][deps]][deps-url]
 [![npm download][npm-download]][npm-download-url]
 [![npm package][license]][license-url]
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/magic-FE/magic-cli)  
+
+[中文文档](README-zh.md)
 
 # install  
 With [npm](https://npmjs.org) do:  
