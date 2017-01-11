@@ -62,7 +62,7 @@ _说明_:
 这个命令是借鉴了[redux-cli](https://github.com/SpencerCDixon/redux-cli)的`generate`命令，但是实现方式不一样。在用它的命令时有很多不舒服的地方。在这个的基础上作了以下的修改  
 1. `magic g` 在查找`blueprints` 模板文件的时候不只会找当前目录(运行命令的目录)，还会查找当前目录的上一层，以及上上层...这样就不用在每个目录都创建`blueprints`模板文件了  
 2. 可以使用`-c,--cwd`选项来制定生成的目录  
-3. 如果生成的文件已经存在则询问用户是否覆盖,而不是直接抛出错误
+3. 如果生成的文件已经存在则询问用户是否覆盖,而不是直接抛出错误  
 4. 增加了修饰符,如下：
 - `__name.cap__`  或者 `__name.capitalize__`   => home to Home
 - `__name.low__`  或者 `__name.lowercase__`   => Home to home
