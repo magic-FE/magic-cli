@@ -30,9 +30,9 @@ _选项_:
 ```
 
 _说明_:  
-这个命令是在[vue-cli](https://github.com/vuejs/vue-cli)的`init`的命令基础上面改的。有以下几个更改点：
-1. 增加了`alias`，也就是项目的别名的使用，初始化时会先去检查是否有别名
-2. 增加了缓存，`vue-cli`默认是在初始化完成后删除所下载的模板文件。修改后会缓存模板文件到系统的tmp目录。如果要更新换成或者是要下载从线上的模板文件进行初始化可以使用`--remote`或者`-r`选项。这样更新的模板文件会覆盖原来缓存的模板文件。
+这个命令是在[vue-cli](https://github.com/vuejs/vue-cli)的`init`的命令基础上面改的。有以下几个更改点:  
+1. 增加了`alias`，也就是项目的别名的使用，初始化时会先去检查是否有别名  
+2. 增加了缓存，`vue-cli`默认是在初始化完成后删除所下载的模板文件。修改后会缓存模板文件到系统的tmp目录。如果要更新换成或者是要下载从线上的模板文件进行初始化可以使用`--remote`或者`-r`选项。这样更新的模板文件会覆盖原来缓存的模板文件。  
 PS：模板文件的渲染规则是使用的 [Handlebars.js](https://github.com/wycats/handlebars.js). 你可以具体参考它的语法。默认也注册了`if_eq`和`unless_eq`两个自定义命令
 
 
@@ -59,14 +59,14 @@ _选项_:
     > -f, --force       # 如果生成的文件已经存在，直接覆盖。不询问用户是否覆盖
 ```
 _说明_:  
-这个命令是借鉴了[redux-cli](https://github.com/SpencerCDixon/redux-cli)的`generate`命令，但是实现方式不一样。在用它的命令时有很多不舒服的地方。在这个的基础上作了以下的修改
-1. `magic g` 在查找`blueprints` 模板文件的时候不只会找当前目录(运行命令的目录)，还会查找当前目录的上一层，以及上上层...这样就不用在每个目录都创建`blueprints`模板文件了
-2. 可以使用`-c,--cwd`选项来制定生成的目录
+这个命令是借鉴了[redux-cli](https://github.com/SpencerCDixon/redux-cli)的`generate`命令，但是实现方式不一样。在用它的命令时有很多不舒服的地方。在这个的基础上作了以下的修改  
+1. `magic g` 在查找`blueprints` 模板文件的时候不只会找当前目录(运行命令的目录)，还会查找当前目录的上一层，以及上上层...这样就不用在每个目录都创建`blueprints`模板文件了  
+2. 可以使用`-c,--cwd`选项来制定生成的目录  
 3. 增加了修饰符,如下：
-- `__name.cap__`  or `__name.capitalize__`   => home to Home
-- `__name.low__`  or `__name.lowercase__`   => Home to home
-- `__name.up__`   or `__name.uppercase__`    => home to HOME
-- `__name.dash__` or `__name.dashcase__`  => homeName to home-name  
+- `__name.cap__`  或者 `__name.capitalize__`   => home to Home
+- `__name.low__`  或者 `__name.lowercase__`   => Home to home
+- `__name.up__`   或者 `__name.uppercase__`    => home to HOME
+- `__name.dash__` 或者 `__name.dashcase__`  => homeName to home-name  
 
 _例子_: 
 > 如果你的blueprint文件是这样的  
