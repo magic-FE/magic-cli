@@ -6,6 +6,7 @@ var rm = require('rimraf')
 describe('magic alias', function() {
   describe('#aliasHelper test', function() {
     it('#get user alias', function() {
+      pathHelper.checkUserSourcePath()
       expect(aliasHelper.getUserAlias()).to.be.an('object')
     })
     it('#add and delete user alias', function(done) {
