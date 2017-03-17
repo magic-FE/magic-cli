@@ -1,6 +1,6 @@
 {
   "name": "magic-cli",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "A tools to help you easily develop react(vue) project",
   "main": "index.js",
   "bin": {
