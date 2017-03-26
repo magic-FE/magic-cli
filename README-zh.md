@@ -105,8 +105,12 @@ _说明_:
 同样的文件内部的 `__name__` 也会被替换。你可以在文件内部的内容使用它。
 # Contents 
 ### Templates :
+__React__:  
+- [xfcf1/react-webpack-starter](https://github.com/xfcf1/react-webpack-starter): 一个嵌入UI组件[antd](https://github.com/ant-design/ant-design)的模版  
 
-_未完成模板文件_, 你可以使用 [vue-cli template](https://github.com/vuejs/vue-cli#official-templates) 生成vue项目, `magic` 和它有一样的使用方法(api).
+__Vue__:  
+- [vue-cli template](https://github.com/vuejs/vue-cli#official-templates): `vue-cli` 官方模版
+
 
 ### Blueprints :
 默认提供的blueprints文件  
