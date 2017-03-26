@@ -98,8 +98,11 @@ Formats:
 The files content also render by this rule , so you can write `__name__` will be replaced
 # Contents 
 ### Templates :
-
-_Not finish, wait a moment_, you can use [vue-cli template](https://github.com/vuejs/vue-cli#official-templates) first, we has the same api like it.
+__React__:  
+- [xfcf1/react-webpack-starter](https://github.com/xfcf1/react-webpack-starter): a simple template with UI component  [antd](https://github.com/ant-design/ant-design) 
+  
+__Vue__:  
+- [vue-cli template](https://github.com/vuejs/vue-cli#official-templates): `vue-cli` official tempalte, we has the same api like it.
 
 ### Blueprints :
 |Name|Description|
